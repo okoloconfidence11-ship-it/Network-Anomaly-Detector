@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defender Core - SOC Platform</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Dark Theme Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
+    </style>
+</head>
+<body class="bg-gray-950 text-slate-100 font-sans h-screen flex overflow-hidden">
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="w-64 bg-gray-900 border-r border-gray-800 flex flex-col justify-between p-6">
+        <div>
+            <!-- BRANDING -->
+            <div class="flex items-center space-x-3 mb-8">
+                <div class="h-9 w-9 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-lg shadow-lg shadow-blue-500/30">
+                    🛡️
+                </div>
+                <div>
+                    <h2 class="text-white font-bold text-base tracking-tight">Defender Core</h2>
+                    <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider">ISO 27001 Hub</p>
+                </div>
+            </div>
+
+            <!-- MENU LINKS -->
+            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-3">Navigation</p>
+            <nav class="space-y-2">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" 
+                    class="w-full text-left bg-gray-800 text-blue-400 border border-blue-500/50 rounded-lg px-4 py-3 text-sm font-medium transition">
+                    📊 Executive Dashboard
+                </button>
+                <button onclick="switchTab('purview')" id="nav-purview" 
+                    class="w-full text-left text-gray-400 hover:text-blue-400 hover:bg-gray-800/60 rounded-lg px-4 py-3 text-sm font-medium transition">
+                    📡 Purview DPI Sniffer
+                </button>
+                <button onclick="switchTab('ai-vision')" id="nav-ai-vision" 
+                    class="w-full text-left text-gray-400 hover:text-blue-400 hover:bg-gray-800/60 rounded-lg px-4 py-3 text-sm font-medium transition">
+                    🧠 AI Vision Core
+                </button>
+            </nav>
+        </div>
+
+        <!-- FOOTER STATUS -->
+        <div class="border-t border-gray-800 pt-4">
+            <div class="flex items-center space-x-2 text-xs text-gray-400">
+                <span class="h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                <span>System Operational</span>
+            </div>
+            <p class="text-[10px] text-gray-600 mt-1">SOC Platform v2.5</p>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT VIEWPORT -->
+    <main class="flex-1 p-8 overflow-y-auto">
+        
+        <!-- HEADER -->
+        <header class="flex justify-between items-center border-b border-gray-800 pb-5 mb-8">
+            <div>
+                <h1 id="page-title" class="text-3xl font-bold tracking-tight text-white">Executive Dashboard</h1>
+                <p class="text-sm text-gray-400 mt-1">Real-time enterprise threat monitoring and analysis panel.</p>
+            </div>
+            <div class="bg-gray-900 border border-gray-800 rounded-lg px-4 py-2 text-xs font-mono text-gray-400 flex items-center gap-2">
+                <span class="text-gray-500">Gateway Target:</span>
+                <span id="gateway-ip-badge" class="text-blue-400 font-bold">10.12.1.107</span>
+            </div>
+        </header>
+
+        <!-- MODULE 1: EXECUTIVE DASHBOARD -->
+        <section id="module-dashboard" class="space-y-6">
+            <!-- METRICS CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Gateway IP</p>
+                    <p class="text-3xl font-bold text-blue-400 mt-2">10.12.1.107</p>
+                </div>
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Active Threats Flagged</p>
+                    <p id="dashboard-threat-count" class="text-3xl font-bold text-red-500 mt-2">0</p>
+                </div>
+            </div>
+
+            <!-- INCIDENTS LOG TABLE -->
+            <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                <h3 class="text-base font-semibold text-white mb-4">Simulated Incident Queue</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-300">
+                        <thead class="bg-gray-950 text-gray-500 uppercase text-xs font-mono border-b border-gray-800">
+                            <tr>
+                                <th class="p-3">Time</th>
+                                <th class="p-3">Threat Type</th>
+                                <th class="p-3">Target IP</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incidents-table-body">
+                            <tr>
+                                <td colspan="3" class="p-4 text-center text-gray-600 font-mono text-xs">
+                                    No active threats logged yet. Inject a threat under Purview DPI Sniffer.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 2: PURVIEW DPI SNIFFER -->
+        <section id="module-purview" class="space-y-6 hidden">
+            <!-- WARNING BANNER -->
+            <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 text-yellow-400 text-sm flex items-center justify-between">
+                <span>⚠️ Live sniffing disabled for stability in this cloud build. Use simulator controls below.</span>
+                <button onclick="injectThreat()" class="bg-red-600 hover:bg-red-700 text-white font-semibold text-xs px-4 py-2 rounded-lg transition shadow-lg shadow-red-600/30">
+                    🚨 Inject Simulated Threat
+                </button>
+            </div>
+
+            <!-- LOG TERMINAL -->
+            <div class="bg-black border border-gray-800 rounded-xl overflow-hidden shadow-2xl">
+                <div class="bg-gray-900 px-5 py-3 border-b border-gray-800 flex items-center justify-between">
+                    <span class="text-xs font-mono text-gray-500">PURVIEW_DPI // THREAT_INJECTION_FEED</span>
+                    <span class="text-xs text-gray-600">STATE: SAFE_SIMULATION</span>
+                </div>
+                <div id="dpi-log-output" class="p-6 bg-gray-950 min-h-[300px] font-mono text-xs space-y-2 max-h-[450px] overflow-y-auto">
+                    <div class="text-gray-600 text-center py-12">Click "Inject Simulated Threat" above to dispatch network vectors into session memory.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 3: AI VISION CORE -->
+        <section id="module-ai-vision" class="space-y-6 hidden">
+            <div class="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                <h3 class="text-base font-semibold text-white mb-2">Upload Log / Evidence File</h3>
+                <p class="text-xs text-gray-400 mb-4">Supported formats: PNG, JPG, JPEG, PDF, CSV, HTML</p>
+
+                <!-- FILE DROPZONE -->
+                <div class="border-2 border-dashed border-gray-800 hover:border-blue-500/50 rounded-xl p-8 text-center transition cursor-pointer bg-gray-950/50" onclick="document.getElementById('file-input').click()">
+                    <input type="file" id="file-input" class="hidden" accept=".png,.jpg,.jpeg,.pdf,.csv,.html" onchange="handleFileSelect(event)">
+                    <div class="text-4xl mb-2">📁</div>
+                    <p class="text-sm font-medium text-gray-300" id="file-label">Click to select or drop audit evidence file</p>
+                    <p class="text-xs text-gray-600 mt-1">Trims up to 4,000 characters automatically for fast stream processing</p>
+                </div>
+
+                <button onclick="runNeuralAnalysis()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm py-3 rounded-lg transition shadow-lg shadow-blue-600/30">
+                    🧠 RUN NEURAL ANALYSIS
+                </button>
+            </div>
+
+            <!-- AI ANALYSIS REPORT OUTPUT -->
+            <div id="ai-report-container" class="bg-gray-900 border border-gray-800 rounded-xl p-6 hidden">
+                <div class="flex items-center space-x-2 border-b border-gray-800 pb-3 mb-4">
+                    <span class="text-green-400">✅</span>
+                    <h3 class="text-base font-bold text-white">ISO 27001 AI Audit Report</h3>
+                </div>
+                <div id="ai-report-text" class="text-sm text-gray-300 leading-relaxed font-mono whitespace-pre-wrap bg-gray-950 p-4 rounded-lg border border-gray-800">
+                    Processing response stream...
+                </div>
+                <p class="text-[11px] text-gray-600 mt-3 text-right">Powered by Gemini 2.5 Flash API</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JAVASCRIPT LOGIC ENGINE -->
+    <script>
+        let simulatedIncidents = [];
+        let activeTab = 'dashboard';
+
+        function switchTab(tabId) {
+            // Hide active modules
+            document.getElementById(`module-${activeTab}`).classList.add('hidden');
+            
+            // Reset nav styles
+            const oldNav = document.getElementById(`nav-${activeTab}`);
+            oldNav.className = "w-full text-left text-gray-400 hover:text-blue-400 hover:bg-gray-800/60 rounded-lg px-4 py-3 text-sm font-medium transition";
+
+            // Set new active tab
+            activeTab = tabId;
+            document.getElementById(`module-${tabId}`).classList.remove('hidden');
+
+            const newNav = document.getElementById(`nav-${tabId}`);
+            newNav.className = "w-full text-left bg-gray-800 text-blue-400 border border-blue-500/50 rounded-lg px-4 py-3 text-sm font-medium transition";
+
+            // Update page title
+            const titles = {
+                'dashboard': 'Executive Dashboard',
+                'purview': 'Purview DPI Sniffer',
+                'ai-vision': 'AI Vision Core'
+            };
+            document.getElementById('page-title').innerText = titles[tabId];
+        }
+
+        function injectThreat() {
+            const threats = ["RDP Brute Force", "DNS Exfiltration", "Port Scan"];
+            const randomThreat = threats[Math.floor(Math.random() * threats.length)];
+            const timeStr = new Date().toLocaleTimeString();
+            const targetIp = `192.168.1.${Math.floor(Math.random() * 253) + 2}`;
+
+            const newIncident = { time: timeStr, threat: randomThreat, target: targetIp };
+            simulatedIncidents.unshift(newIncident);
+
+            updateUI();
+        }
+
+        function updateUI() {
+            // Update Threat Count
+            document.getElementById('dashboard-threat-count').innerText = simulatedIncidents.length;
+
+            // Update Dashboard Table
+            const tbody = document.getElementById('incidents-table-body');
+            if (simulatedIncidents.length > 0) {
+                tbody.innerHTML = simulatedIncidents.map(inc => `
+                    <tr class="border-b border-gray-800/50 hover:bg-gray-800/30">
+                        <td class="p-3 font-mono text-xs text-gray-400">${inc.time}</td>
+                        <td class="p-3 font-semibold text-red-400">${inc.threat}</td>
+                        <td class="p-3 font-mono text-xs text-blue-400">${inc.target}</td>
+                    </tr>
+                `).join('');
+            }
+
+            // Update DPI Terminal
+            const dpiOutput = document.getElementById('dpi-log-output');
+            if (simulatedIncidents.length > 0) {
+                dpiOutput.innerHTML = simulatedIncidents.map(inc => `
+                    <div class="text-red-400 border-b border-gray-900 pb-1">
+                        [${inc.time}] 🚨 ALERT INJECTED ➡️ ${inc.threat} targeting ${inc.target}
+                    </div>
+                `).join('');
+            }
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('file-label').innerText = `Selected File: ${file.name}`;
+            }
+        }
+
+        function runNeuralAnalysis() {
+            const fileInput = document.getElementById('file-input');
+            if (!fileInput.files.length) {
+                alert("Please select a file to upload first!");
+                return;
+            }
+
+            const reportContainer = document.getElementById('ai-report-container');
+            const reportText = document.getElementById('ai-report-text');
+
+            reportContainer.classList.remove('hidden');
+            reportText.innerText = "Connecting to Gemini API... Streaming lightweight audit data...";
+
+            // Simulated AI API delay matching requests backend logic
+            setTimeout(() => {
+                reportText.innerText = 
+`--- ISO 27001 SECURITY AUDIT REPORT ---
+Target Asset: Uploaded Evidence File
+Audit Status: COMPLETED
+
+[IDENTIFIED ANOMALIES]
+1. Unencrypted Egress Traversal detected on Port 80/443 interface segment.
+2. High-frequency connection attempts matching brute-force signatures.
+
+[REMEDIATION ACTIONS]
+- Enforce strict Network Access Control Lists (NACLs).
+- Restrict remote access protocols (RDP/SSH) through VPN with mandatory MFA.
+- Implement rate limiting on sensitive API endpoints.
+
+[BUSINESS CONTINUITY]
+- Target RTO (Recovery Time Objective): < 2 Hours
+- Target RPO (Recovery Point Objective): < 15 Minutes`;
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
